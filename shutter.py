@@ -5,6 +5,7 @@ import cv2
 import Adafruit_BBIO.GPIO as GPIO
 import time, datetime
 import os
+import subprocess
 import pysftp
 import futures
 
@@ -28,6 +29,14 @@ def upload_sftp(file, server, username, password):
 				sftp.put(file)
 	except:
 		print "Unable to upload file."
+
+def display_image(file):
+    try:
+        command = "feh %s -F -Z" % file
+        subprocess.call('killall feh', shell=True)
+        viewImg = subprocess.Popen(command, shell=True)
+    except:
+        print "Unable to display %s" % file
 
 ###I/O
 GPIO.setup("P8_12", GPIO.IN)
@@ -54,6 +63,7 @@ while True:
 
 		GPIO.output("P8_10", GPIO.HIGH)
 		take_picture(file)
+		display_image(file)
 		#future = executor.submit(upload_sftp, file, 'ftp.sername.com', 'username', 'password')
 		GPIO.output("P8_10", GPIO.LOW)
 
